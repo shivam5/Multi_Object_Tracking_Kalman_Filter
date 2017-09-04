@@ -1,0 +1,6 @@
+make
+./run
+cd src
+python plot_prediction.py
+python generate_video.py
+cd ..

@@ -1,0 +1,100 @@
+Multi object tracking using detection and smoothening predictions using kalman filter
+======================================================================================
+
+
+Author
+-------
+Shivam Mittal
+Hi-Tech Robotics Systems Ltd.
+Email - 2015csb1032@iitrpr.ac.in
+Github profile - github.com/shivam5
+
+
+For more details about the project, see the project presentation :
+https://docs.google.com/presentation/d/14YITVr-GOidGLGmD0QUJZZl2Gp_B20Ei3kU-gXFEQsI/edit#slide=id.g1fa5ef87f5_1_33
+
+
+Compiling and running code
+---------------------------
+Basically the code reads the predictions made by a object detector (We used predictions by YOLO), and generates new predictions with track ids for each object in a frame.
+
+You can configure the strings image_files, yolo_labels_folder and filtered_labels_folder in the file src/main.cpp.
+image_file is the path of the text file which contains the image paths in order of occurence (frame 1 before frame 2). Example can be seen.
+
+yolo_labels_folder is the path of the folder which contains the results of the detection algorithm, there will be multiple files in the folder, each file corresponding to one frame (image). The filename of the labels should be corresponding to the image names in the text file given in image_file.
+Eg: If the text file contains:
+/home/madan/DATA/Traffic_light/test_cropped/2000.png
+then there should be a 2000.txt file in folder given in yolo_labels_folder.
+The data in the file should be given in the format:
+line 1
+line 2
+...
+where each line corresponds to one detection box.
+The format of each line is:
+object_category x y w h
+The x,y,w,h are normalized by the height and width (between 0 and 1).
+
+filtered_labels_folder contains the path of the folder where the resulting text files will be saved contains the tracked and smoothened results.
+
+The format of the input can be seen in the example folder. 
+
+
+Tested in ubuntu environment only. Open terminal.
+$ make
+$ ./run
+
+
+There are two python scripts in the src folder for plotting the predictions and making a video out of it. The images or the video may or may not be given in the code package simply to reduce the size.
+Go to the src folder.
+Configure the string which contain the folders in the python script.
+Then :
+python plot_predictions.py
+python generate_video.py
+But make sure that the images whose paths are given in the text file (test_video.txt) exist there.
+
+You could also do the whole procedure by shell script by running.
+./script
+But make sure variables containing the paths of files in main.cpp, generate_video.py, plot_predictions.py are properly configured.
+Also, the file example/test_video.txt is properly configured.
+
+In the images or the video, the white boxes are the predictions by your detection algorithm (YOLO in our case), and yellow boxes are the tracked and smoothened version.
+
+
+Abstract
+---------
+This code tracks multiple object using predictions from a detection algorithm. We used YOLO detection algorithm and tracked the objects using its predictions. Also, we smoothened the predictions using kalman filter so that sudden errors (such as missing prediction, or large localization error) in the detection algorithm doesn't effect our predictions much. 
+
+
+Directory structure
+--------------------
+
+Matrix_Library
+  |
+  |- include
+      |- kalman.h
+      |- main.h
+      |- matrix.h
+      |- utils.h
+  
+  |- src
+      |- kalman.cpp
+      |- main.cpp
+      |- utils.cpp
+      |- generate_video.cpp
+      |- plot_predictions.cpp
+
+  |- bin
+      (.o files)
+
+  |- example
+      test_video.txt
+      yolo_predictions/
+      yolo_predictions_filtered/
+      result_images/
+      result_video.avi
+
+  |- Makefile  
+
+  |- README
+
+
